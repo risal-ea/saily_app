@@ -204,7 +204,7 @@ class _FilterChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFFFD500) : Colors.white,
+          color: isSelected ? AppColors.homeGradientStart : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected ? Colors.transparent : Colors.black.withValues(alpha: 0.1),
@@ -216,7 +216,7 @@ class _FilterChip extends StatelessWidget {
             fontFamily: 'Fustat',
             fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
             fontSize: 15,
-            color: AppColors.textBlack,
+            color: isSelected? Colors.white : AppColors.textBlack,
           ),
         ),
       ),

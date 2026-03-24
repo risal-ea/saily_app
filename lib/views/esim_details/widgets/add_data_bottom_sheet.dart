@@ -41,7 +41,7 @@ class _AddDataBottomSheetState extends State<AddDataBottomSheet> {
           Align(
             alignment: Alignment.centerRight,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Color(0xFF0F172A)),
+              icon: Icon(Icons.close, color: AppColors.textBlack),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -114,11 +114,11 @@ class _AddDataBottomSheetState extends State<AddDataBottomSheet> {
                 Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF1D4ED8), // Deep blue
+                backgroundColor: AppColors.homeGradientStart, // Deep blue
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: const Text(
@@ -144,7 +144,7 @@ class _AddDataBottomSheetState extends State<AddDataBottomSheet> {
     required bool isSelected,
   }) {
     // Colors mimicking the attached UI
-    final borderColor = isSelected ? const Color(0xFF6366F1) : const Color(0xFFE2E8F0);
+    final borderColor = isSelected ? AppColors.homeGradientStart : AppColors.homeGradientStart.withValues(alpha: 0.1);
     final bgColor = isSelected ? const Color(0xFFEEF2FF) : Colors.white;
 
     return Stack(
@@ -201,7 +201,7 @@ class _AddDataBottomSheetState extends State<AddDataBottomSheet> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: const Color(0xFF1E3A8A), // Dark blue badge
+                color: AppColors.homeGradientStart, // Dark blue badge
                 borderRadius: BorderRadius.circular(6),
               ),
               child: const Text(

@@ -109,7 +109,7 @@ class QuickBuyBottomSheet extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: primaryColor.withValues(alpha: 0.1),
+                    color: AppColors.homeGradientStart.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
@@ -118,7 +118,7 @@ class QuickBuyBottomSheet extends StatelessWidget {
                       fontFamily: 'Fustat',
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: primaryColor,
+                      color: AppColors.homeGradientStart,
                     ),
                   ),
                 ),
@@ -148,11 +148,11 @@ class QuickBuyBottomSheet extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
+                backgroundColor: AppColors.homeGradientStart,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(100),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: const Text(
