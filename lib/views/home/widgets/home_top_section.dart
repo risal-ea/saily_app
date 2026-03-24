@@ -1,6 +1,9 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:saily_app/core/constants/app_colors.dart';
 import 'package:saily_app/viewmodels/home_viewmodel.dart';
+import 'package:saily_app/views/data_plans/data_plans_screen.dart';
+import 'package:saily_app/views/home/widgets/quick_buy_bottom_sheet.dart';
 
 /// Gradient header card showing country, data usage, progress bar, and plan buttons.
 class HomeTopSection extends StatelessWidget {
@@ -39,19 +42,58 @@ class HomeTopSection extends StatelessWidget {
               const SizedBox(height: 12),
               _dataUsageRow(),
               const SizedBox(height: 16),
-              _progressBar(),
-              const SizedBox(height: 32),
-              const Text(
-                'Select & get add-on data',
-                style: TextStyle(
-                  fontFamily: 'Fustat',
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
+              if (vm.eSims.isNotEmpty) ...[
+                _progressBar(),
+                const SizedBox(height: 32),
+                const Text(
+                  'Select & get add-on data',
+                  style: TextStyle(
+                    fontFamily: 'Fustat',
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _planCardsRow(context),
+                const SizedBox(height: 24),
+              ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const DataPlansScreen(),
+                    ),
+                  );
+                },
+                child: CustomPaint(
+                  painter: _DashedBorderPainter(
+                    color: Colors.white,
+                    strokeWidth: 1.5,
+                    radius: 16.0,
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Explore Plans',
+                        style: TextStyle(
+                          fontFamily: 'Fustat',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              _planCardsRow(),
               const SizedBox(height: 6),
             ],
           ),
@@ -83,6 +125,24 @@ class HomeTopSection extends StatelessWidget {
   }
 
   Widget _countryRow() {
+    if (vm.eSims.isEmpty) {
+      return const Row(
+        children: [
+          Text('👋', style: TextStyle(fontSize: 24)),
+          SizedBox(width: 10),
+          Text(
+            'Ready to travel?',
+            style: TextStyle(
+              fontFamily: 'Fustat',
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
+      );
+    }
+
     return Row(
       children: [
         Text(vm.countryFlag, style: const TextStyle(fontSize: 24)),
@@ -103,6 +163,19 @@ class HomeTopSection extends StatelessWidget {
   }
 
   Widget _dataUsageRow() {
+    if (vm.eSims.isEmpty) {
+      return const Text(
+        'No active plan',
+        style: TextStyle(
+          fontFamily: 'Fustat',
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+          color: Colors.white,
+          letterSpacing: -1,
+        ),
+      );
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.baseline,
       textBaseline: TextBaseline.alphabetic,
@@ -144,58 +217,83 @@ class HomeTopSection extends StatelessWidget {
     );
   }
 
-  Widget _planCardsRow() {
+  Widget _planCardsRow(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        _planCard('2 GB', '\$3.5'),
-        _planCard('6 GB', '\$8'),
-        _planCard('1 GB', '\$2'),
-        _viewAllCard(),
+        _planCard(context, '2 GB', '\$3.5', 2.0),
+        _planCard(context, '6 GB', '\$8', 6.0),
+        _planCard(context, '1 GB', '\$2', 1.0),
+        _viewAllCard(context),
       ],
     );
   }
 
-  Widget _planCard(String data, String price) {
-    return Container(
-      width: 68,
-      height: 68,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            data,
-            style: const TextStyle(
-              fontFamily: 'Fustat',
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              color: AppColors.homeGradientStart,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+  Widget _planCard(BuildContext context, String data, String price, double gigabytes) {
+    return GestureDetector(
+      onTap: () {
+        if (vm.activeEsim == null) return;
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => QuickBuyBottomSheet(
+            activeEsim: vm.activeEsim!,
+            dataLabel: data,
+            priceLabel: price,
+            gigabytes: gigabytes,
           ),
-          Text(
-            price,
-            style: const TextStyle(
-              fontFamily: 'Fustat',
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: AppColors.homeGradientStart,
+        );
+      },
+      child: Container(
+        width: 68,
+        height: 68,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              data,
+              style: const TextStyle(
+                fontFamily: 'Fustat',
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                color: AppColors.homeGradientStart,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+            Text(
+              price,
+              style: const TextStyle(
+                fontFamily: 'Fustat',
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: AppColors.homeGradientStart,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _viewAllCard() {
-    return Container(
-      width: 68,
-      height: 68,
+  Widget _viewAllCard(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const DataPlansScreen(),
+          ),
+        );
+      },
+      child: Container(
+        width: 68,
+        height: 68,
       decoration: BoxDecoration(
         color: AppColors.iconBackground,
         shape: BoxShape.circle,
@@ -217,6 +315,51 @@ class HomeTopSection extends StatelessWidget {
           ),
         ],
       ),
+      ),
     );
   }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double strokeWidth;
+  final double radius;
+
+  _DashedBorderPainter({
+    required this.color,
+    this.strokeWidth = 2.0,
+    this.radius = 16.0,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    var path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          Radius.circular(radius)));
+
+    PathMetrics pathMetrics = path.computeMetrics();
+    Path dashedPath = Path();
+    for (PathMetric pathMetric in pathMetrics) {
+      double distance = 0.0;
+      bool draw = true;
+      while (distance < pathMetric.length) {
+        double len = draw ? 6.0 : 4.0; // dashLength : gapLength
+        dashedPath.addPath(
+            pathMetric.extractPath(distance, distance + len), Offset.zero);
+        distance += len;
+        draw = !draw;
+      }
+    }
+
+    canvas.drawPath(dashedPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

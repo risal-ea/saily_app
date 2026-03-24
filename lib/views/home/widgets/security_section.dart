@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:saily_app/core/constants/app_colors.dart';
-import 'package:saily_app/data/models/security_state_model.dart';
 import 'package:saily_app/viewmodels/home_viewmodel.dart';
+import 'package:saily_app/views/home/widgets/no_plan_bottom_sheet.dart';
+import 'package:saily_app/data/models/security_state_model.dart';
 
 /// A sleek, Apple-style security section displaying real-time protection status
 /// and providing quick controls for VPN, Ad Blocker, and Web Protection.
@@ -14,6 +15,21 @@ class SecuritySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = vm.securityState;
+
+    final hasActivePlan = vm.activeEsim != null && !vm.activeEsim!.isExpired;
+
+    void interceptToggle(bool _, VoidCallback action) {
+      if (!hasActivePlan) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (context) => const NoPlanBottomSheet(),
+        );
+      } else {
+        action();
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -33,7 +49,7 @@ class SecuritySection extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Top Card: Security Status
-          _statusCard(state),
+          _statusCard(context, state, hasActivePlan),
           const SizedBox(height: 16),
 
           // Quick Controls List
@@ -54,22 +70,22 @@ class SecuritySection extends StatelessWidget {
                 _controlTile(
                   icon: Icons.public,
                   title: 'Virtual Location (VPN)',
-                  value: state.isVpnEnabled,
-                  onChanged: vm.toggleVpn,
+                  value: hasActivePlan ? state.isVpnEnabled : false,
+                  onChanged: (val) => interceptToggle(val, () => vm.toggleVpn(val)),
                 ),
                 _divider(),
                 _controlTile(
                   icon: Icons.block,
                   title: 'Ad Blocker',
-                  value: state.isAdBlockerEnabled,
-                  onChanged: vm.toggleAdBlocker,
+                  value: hasActivePlan ? state.isAdBlockerEnabled : false,
+                  onChanged: (val) => interceptToggle(val, () => vm.toggleAdBlocker(val)),
                 ),
                 _divider(),
                 _controlTile(
                   icon: Icons.security,
                   title: 'Web Protection',
-                  value: state.isWebProtectionEnabled,
-                  onChanged: vm.toggleWebProtection,
+                  value: hasActivePlan ? state.isWebProtectionEnabled : false,
+                  onChanged: (val) => interceptToggle(val, () => vm.toggleWebProtection(val)),
                   isLast: true,
                 ),
               ],
@@ -80,13 +96,13 @@ class SecuritySection extends StatelessWidget {
     );
   }
 
-  Widget _statusCard(SecurityStateModel state) {
-    final isProtected = state.isFullyProtected;
+  Widget _statusCard(BuildContext context, SecurityStateModel state, bool hasActivePlan) {
+    final isProtected = hasActivePlan && state.isFullyProtected;
     final color = isProtected ? AppColors.cardGreen1 : AppColors.cardRed1;
     final title = isProtected ? 'Protected' : 'At Risk';
-    final subtitle = isProtected
-        ? 'Your connection is secure.'
-        : 'Action recommended to secure data.';
+    final subtitle = hasActivePlan 
+        ? (isProtected ? 'Your connection is secure.' : 'Action recommended to secure data.')
+        : 'Active plan required for security.';
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -145,7 +161,7 @@ class SecuritySection extends StatelessWidget {
                 ),
                 if (!isProtected) ...[
                   const SizedBox(height: 12),
-                  _turnOnProtectionButton(),
+                  _turnOnProtectionButton(context, hasActivePlan),
                 ],
                 if (isProtected && state.trackersBlockedToday > 0) ...[
                   const SizedBox(height: 8),
@@ -167,13 +183,21 @@ class SecuritySection extends StatelessWidget {
     );
   }
 
-  Widget _turnOnProtectionButton() {
+  Widget _turnOnProtectionButton(BuildContext context, bool hasActivePlan) {
     return GestureDetector(
       onTap: () {
-        // In a real app, this would trigger a flow to enable all protections.
-        vm.toggleVpn(true);
-        vm.toggleAdBlocker(true);
-        vm.toggleWebProtection(true);
+        if (!hasActivePlan) {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const NoPlanBottomSheet(),
+          );
+        } else {
+          vm.toggleVpn(true);
+          vm.toggleAdBlocker(true);
+          vm.toggleWebProtection(true);
+        }
       },
       child: Container(
         width: double.infinity,

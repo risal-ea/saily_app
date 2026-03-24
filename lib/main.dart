@@ -16,7 +16,7 @@ void main() async {
   final storageService = StorageService(prefs);
 
   // Uncomment the line below to reset onboarding:
-  // await storageService.clearAll();
+  await storageService.clearAll();
 
   // Decide initial route based on onboarding status
   final initialRoute = storageService.hasSeenOnboarding()
@@ -33,7 +33,7 @@ void main() async {
           create: (_) => AuthViewModel(),
         ),
         ChangeNotifierProvider(
-          create: (_) => HomeViewModel(),
+          create: (_) => HomeViewModel(storageService),
         ),
       ],
       child: MyApp(initialRoute: initialRoute),

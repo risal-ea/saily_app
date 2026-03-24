@@ -120,7 +120,7 @@ class ESimCardItem extends StatelessWidget {
 
   Widget _statusRow() {
     final color =
-        esim.isActive ? const Color(0xFF22C55E) : const Color(0xFFEF4444);
+        esim.isExpired ? const Color(0xFFEF4444) : (esim.isActive ? const Color(0xFF22C55E) : AppColors.textGrey);
     return Row(
       children: [
         Container(
@@ -130,7 +130,7 @@ class ESimCardItem extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Text(
-          esim.isActive ? 'Active' : 'Expired',
+          esim.isExpired ? 'Expired' : (esim.isActive ? 'Active' : 'Inactive'),
           style: TextStyle(
             fontFamily: 'Fustat',
             fontSize: 12,

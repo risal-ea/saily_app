@@ -4,9 +4,10 @@ import 'package:saily_app/data/models/for_you_card_model.dart';
 
 /// A single smart recommendation card for the "For You" section.
 class RecommendationCard extends StatelessWidget {
-  const RecommendationCard({super.key, required this.card});
+  const RecommendationCard({super.key, required this.card, this.onTap});
 
   final ForYouCardModel card;
+  final VoidCallback? onTap;
 
   // Icon color per card type
   static const Map<ForYouCardType, Color> _iconColors = {
@@ -32,8 +33,10 @@ class RecommendationCard extends StatelessWidget {
         ? AppColors.homeGradientStart
         : const Color(0xFF111827);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -65,7 +68,7 @@ class RecommendationCard extends StatelessWidget {
           _ctaButton(btnColor),
         ],
       ),
-    );
+    ));
   }
 
   Widget _iconArea(IconData? icon, Color? iconColor) {

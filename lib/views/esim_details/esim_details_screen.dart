@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:saily_app/core/constants/app_colors.dart';
 import 'package:saily_app/data/models/esim_model.dart';
 import 'package:saily_app/viewmodels/esim_details_viewmodel.dart';
+import 'package:saily_app/viewmodels/home_viewmodel.dart';
 import 'package:saily_app/views/esim_details/widgets/esim_controls_section.dart';
 import 'package:saily_app/views/esim_details/widgets/esim_details_header.dart';
 
@@ -17,50 +18,62 @@ class EsimDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EsimDetailsViewModel(esim),
+      create: (_) => EsimDetailsViewModel(esim, context.read<HomeViewModel>()),
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark.copyWith(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: Brightness.dark,
         ),
-        child: Scaffold(
-          backgroundColor: AppColors.homeBackground,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
-              onPressed: () => Navigator.of(context).pop(),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color(esim.gradientColors.first).withValues(alpha: 0.05),
+                Color(esim.gradientColors.last).withValues(alpha: 0.15),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
-            title: Text(
-              esim.title,
-              style: const TextStyle(
-                fontFamily: 'Fustat',
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textBlack,
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.more_horiz, color: AppColors.textBlack),
-                onPressed: () {},
-              ),
-            ],
           ),
-          body: Consumer<EsimDetailsViewModel>(
-            builder: (context, vm, _) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    EsimDetailsHeader(vm: vm),
-                    const SizedBox(height: 16),
-                    EsimControlsSection(vm: vm),
-                  ],
+          child: Scaffold(
+          backgroundColor: AppColors.homeBackground,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textBlack),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              title: Text(
+                esim.title,
+                style: const TextStyle(
+                  fontFamily: 'Fustat',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textBlack,
                 ),
-              );
-            },
+              ),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.more_horiz, color: AppColors.textBlack),
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            body: Consumer<EsimDetailsViewModel>(
+              builder: (context, vm, _) {
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      EsimDetailsHeader(vm: vm),
+                      const SizedBox(height: 16),
+                      EsimControlsSection(vm: vm),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),

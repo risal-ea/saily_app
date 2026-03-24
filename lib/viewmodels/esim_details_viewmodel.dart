@@ -1,14 +1,19 @@
 import 'package:flutter/foundation.dart';
 import 'package:saily_app/data/models/esim_model.dart';
 
+import 'package:saily_app/viewmodels/home_viewmodel.dart';
+
 /// ViewModel for managing the state of an individual eSIM on the details page.
 class EsimDetailsViewModel extends ChangeNotifier {
-  EsimDetailsViewModel(this._esim);
+  EsimDetailsViewModel(this._esim, this._homeVm);
 
   final ESimModel _esim;
+  final HomeViewModel _homeVm;
 
   // Read-only access to the underlying model properties
   ESimModel get esim => _esim;
+
+  bool get isActiveEsim => _homeVm.activeEsim?.id == _esim.id;
 
   // --- Mutable View State (Mocked) ---
   
@@ -19,6 +24,13 @@ class EsimDetailsViewModel extends ChangeNotifier {
   bool get isAutoRenewEnabled => _isAutoRenewEnabled;
 
   // --- Actions ---
+
+  Future<void> toggleActiveEsim(bool value) async {
+    if (value && !isActiveEsim) {
+      await _homeVm.setActiveEsim(_esim.id);
+      notifyListeners();
+    }
+  }
 
   void toggleDataRoaming(bool value) {
     _isDataRoamingEnabled = value;

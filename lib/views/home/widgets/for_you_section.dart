@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:saily_app/core/constants/app_colors.dart';
 import 'package:saily_app/viewmodels/home_viewmodel.dart';
 import 'package:saily_app/views/home/widgets/recommendation_card.dart';
+import 'package:saily_app/views/data_plans/data_plans_screen.dart';
+import 'package:saily_app/views/esim_details/widgets/add_data_bottom_sheet.dart';
+import 'package:saily_app/data/models/for_you_card_model.dart';
 
 /// "For You" smart recommendations section.
 /// Cards are driven by [HomeViewModel.forYouCards] — max 3 shown,
@@ -42,7 +45,26 @@ class ForYouSection extends StatelessWidget {
           ...vm.forYouCards.map(
             (card) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: RecommendationCard(card: card),
+              child: RecommendationCard(
+                card: card,
+                onTap: () {
+                  if (card.type == ForYouCardType.dataUsageWarning) {
+                    if (vm.activeEsim != null) {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => AddDataBottomSheet(esim: vm.activeEsim!),
+                      );
+                    }
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const DataPlansScreen()),
+                    );
+                  }
+                },
+              ),
             ),
           ),
         ],
