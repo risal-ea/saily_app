@@ -138,6 +138,10 @@ handoff before transitioning into the redesigned purple Home Screen.
   <img src="assets/screenshots/wireframe3.jpg" width="250"/>
 </p>
 
+## 📱Demo
+
+https://github.com/user-attachments/assets/demo.mp4
+
 ---
 
 ## 🚀 Setup & Run
