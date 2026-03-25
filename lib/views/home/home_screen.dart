@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:saily_app/core/constants/app_colors.dart';
@@ -30,6 +32,22 @@ class HomeScreen extends StatelessWidget {
                 _fadingPage(vm, 2, const ConstructionScreen(title: 'Help')),
                 _fadingPage(vm, 3, const ConstructionScreen(title: 'Profile')),
               ],
+            ),
+
+            //TOP BLUR (Status bar area)
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: MediaQuery.of(context).padding.top + 8, // status bar height
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                  child: Container(
+                    color: Colors.black.withValues(alpha: 0.1), // optional tint
+                  ),
+                ),
+              ),
             ),
 
             // Floating nav bar overlaid at the bottom
