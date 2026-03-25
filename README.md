@@ -140,7 +140,7 @@ handoff before transitioning into the redesigned purple Home Screen.
 
 ## 📱Demo
 
-https://github.com/user-attachments/assets/demo.mp4
+https://github.com/user-attachments/assets/14e2c36f-de91-455d-8de4-35de81f97824
 
 ---
 
